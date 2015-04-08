@@ -1,7 +1,13 @@
 var express = require('express'), 
     http = require('http'), 
+	//auth = require('http-auth');
     path = require('path'),
     Post = require('./Post');
+
+/*var basic = auth.basic({
+    realm: "Simon Area.",
+    file: __dirname + "/users.htpasswd" // gevorg:gpass, Sarah:testpass ... 
+});*/
 
 var app = express();
 
@@ -14,18 +20,25 @@ app.configure(function() {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(app.router);
+	//app.use(express.basicAuth('username', 'password'));
+	// app.use(express.basicAuth(function(user, pass){
+   //return 'admin' == user && 'admin' == pass;
+ //}));
     app.use(express.static(path.join(__dirname, 'public')));
 });
+
+
 
 app.configure('development', function() {
     app.use(express.errorHandler());
 });
 
+
 // Render our home page with all blog posts
-app.get('/', function(request, response) {
+app.get('/',  function(request, response) {
 
     // TODO: How do we get a list of all model objects using a mongoose model?
-    Post.CHANGEME(function(err, posts) {
+    Post.find(function(err, posts) {
         if (err) {
             response.send(500, 'There was an error - tough luck.');
         }
@@ -37,18 +50,26 @@ app.get('/', function(request, response) {
     });
 });
 
+var auth = express.basicAuth(function(username, password){
+	return username === 'admin' && password === 'admin';
+}
+);
+
 // Render a form to enter a new post
-app.get('/new', function(request, response) {
+app.get('/new', auth, function(request, response) {
     response.render('new', {});
 });
 
 // create a new blog post object
-app.post('/create', function(request, response) {
+app.post('/create', auth,  function(request, response) {
     // TODO: Create and save a Post model
-    var post = CHANGEME();
+    var post = new Post({
+        title: request.body.title,
+        content: request.body.content
+    });
 
     // TODO: Save the model
-    post.CHANGEME(function(err, model) {
+    post.save(function(err, model) {
         if (err) {
             response.send(500, 'There was an error - tough luck.');
         }

@@ -5,7 +5,7 @@ var http = require('http'),
 http.createServer(function(request, response) {
 
     // TODO: Find the ASYNCHRONOUS, NON-BLOCKING API for reading in a file.
-    fs.CHANGE_ME('./data.csv', 'utf-8', function(err, data) {
+    //fs.CHANGE_ME('./data.csv', 'utf-8', function(err, data) {
         var responseData = {};
 
         // Basic JS: Work with the data in the file, and create the response

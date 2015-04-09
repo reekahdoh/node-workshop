@@ -37,6 +37,18 @@ app.configure('development', function() {
     app.use(express.errorHandler());
 });
 
+app.get("/blog/posts/", function(request, response){
+		return Post.find(function( err, posts ) {
+        if( !err ) {
+            return response.send( posts );
+        } else {
+            console.log( err );
+            return response.send('ERROR');
+        }
+    });
+	}
+);
+
 
 // Render our home page with all blog posts
 app.get('/',  function(request, response) {
